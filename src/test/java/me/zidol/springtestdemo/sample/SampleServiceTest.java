@@ -1,5 +1,6 @@
 package me.zidol.springtestdemo.sample;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +10,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.rule.OutputCapture;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -64,6 +67,9 @@ public class SampleServiceTest {
 //                .expectStatus().isOk()
 //                .expectBody(String.class).isEqualTo("hello zidol");
 //    }
+
+    @Rule
+    public OutputCapture outputCapture = new OutputCapture();   //로그를 비롯 콘솔에 찍히는것을 캡쳐
     //WebMvcTest에서는 service는 등록이 안되기때문에 주입을 해줘야 함
     @MockBean
     SampleService mockSampleService;
@@ -77,6 +83,9 @@ public class SampleServiceTest {
 
         mockMvc.perform(get("/hello"))
                 .andExpect(content().string("hello zidol"));
+        assertThat(outputCapture.toString())
+                .contains("holoman")
+                .contains("skip");
 
     }
 }
